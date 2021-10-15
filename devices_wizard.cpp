@@ -15,6 +15,17 @@
 
 #include <QTextEdit>
 #include <QTreeView>
+#include <QStyledItemDelegate>
+
+namespace {
+class ItemDelegate : public QStyledItemDelegate {
+    QSize sizeHint(const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const override {
+        auto result = QStyledItemDelegate::sizeHint( option, index );
+        return QSize( result.width(), result.height() + 10 );
+    }
+};
+}
 
 DevicesWizard::DevicesWizard(DevicesModel& model, QWidget* parent) : QWidget(parent), m_devicesModel(model)
 {
@@ -24,7 +35,7 @@ DevicesWizard::DevicesWizard(DevicesModel& model, QWidget* parent) : QWidget(par
 
     auto listView = new QListView(this);
     mainLayout->addWidget(listView);
-
+    listView->setItemDelegate( new ItemDelegate );
 
     m_listViewModel = new QStringListModel;
 
@@ -93,10 +104,12 @@ R"({
             "groups": [
                 {
                     "name": "Lifeline",
+                    "profile": "default",
                     "maxAssociationsNumber": 10
                 },
                 {
                     "name": "Secondary Group",
+                    "profile": "Electric:Meter",
                     "maxAssociationsNumber": 5
                 }
             ]
@@ -105,13 +118,13 @@ R"({
 }
 )");
 
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(15);
 
-    mainLayout->addWidget(new QLabel("New Device", this));
+    mainLayout->addWidget(new QLabel("New Device Json Description", this));
     mainLayout->addWidget(textEdit);
 
 
-    auto addNewDeviceButton = new QPushButton("Add New Device", this);
+    auto addNewDeviceButton = new QPushButton("Add New Device By Json", this);
     connect(addNewDeviceButton, &QPushButton::clicked, this, [textEdit, this]() {
         auto jsonDoc = QJsonDocument::fromJson( QByteArray( textEdit->toPlainText().toLocal8Bit() ) );
 
@@ -131,6 +144,7 @@ R"({
                     DevicesModel::AssociationGroup associationGroup;
                     auto groupObject = group.toObject();
                     associationGroup.name = groupObject["name"].toString().toStdString();
+                    associationGroup.profile = groupObject["profile"].toString().toStdString();
                     associationGroup.maxAssociationsNumber = groupObject["maxAssociationsNumber"].toInt();
 
                     associationGroups.push_back( std::move( associationGroup ) );
@@ -148,7 +162,6 @@ R"({
                 device.children.push_back( std::move( subdevice ) );
             }
 
-            qDebug() << "add device";
             m_devicesModel.addDevice( std::move( device ) );
             addDeviceToListView( m_devicesModel.getDevices().back() );
 
@@ -165,7 +178,7 @@ void DevicesWizard::addDeviceToListView( const DevicesModel::Device& device ) {
 
     m_listViewModel->insertRow( row );
     auto parentIndex = m_listViewModel->index( row, 0 );
-    m_listViewModel->setData( parentIndex, QString::fromStdString(device.name) );
+    m_listViewModel->setData( parentIndex, QString::fromStdString(device.name) + " (node: " + QString::number( device.nodeId ) + ")" );
 
     m_listViewModel->insertRows( ++row, device.children.size());
     m_parents.push_back(parentIndex.row());

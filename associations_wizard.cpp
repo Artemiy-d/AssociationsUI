@@ -46,8 +46,8 @@ QString associationToString(const DevicesModel& model, const AssociationInfo& as
     auto& targetDevice = model.getDevices()[ associationInfo.targetDeviceIndex ];
 
     std::stringstream stream;
-    stream << "Source: " << device.name << " [ node: " << device.nodeId << "; channel: " << associationInfo.channelIndex << "; group: " << device.channelsToGroups[associationInfo.channelIndex][associationInfo.groupIndex].name << "]" <<
-              "\nTarget: " << targetDevice.name << " [ node: " << targetDevice.nodeId;
+    stream << "Source: " << device.name << " [node: " << device.nodeId << "; channel: " << associationInfo.channelIndex << "; group: " << device.channelsToGroups[associationInfo.channelIndex][associationInfo.groupIndex].name << "]" <<
+              "\nTarget: " << targetDevice.name << " [node: " << targetDevice.nodeId;
     if (associationInfo.targetChannelIndex) {
         stream << "; channel: " << *associationInfo.targetChannelIndex;
     }
@@ -311,6 +311,7 @@ AssociationsWizard::AssociationsWizard(DevicesModel& model, size_t index, std::o
         layout->addWidget(m_sourceGroupCombo);
 
         auto groupInfoButton = new QPushButton("Info", this);
+        groupInfoButton->setSizePolicy( QSizePolicy::Fixed, groupInfoButton->sizePolicy().verticalPolicy() );
         connect(groupInfoButton, &QPushButton::clicked, this, [this]() {
             if ( m_sourceNodeCombo->currentIndex() > 0 && m_sourceChannelCombo->currentIndex() > 0 && m_sourceGroupCombo->currentIndex() > 0 ) {
                 emit groupsWizardRequested(m_sourceNodeCombo->currentIndex() - 1, m_sourceChannelCombo->currentIndex() - 1, m_sourceGroupCombo->currentIndex() - 1);
@@ -432,10 +433,9 @@ AssociationsWizard::AssociationsWizard(DevicesModel& model, size_t index, std::o
 
     updateTargetNodeCombo();
 
-    connect( m_targetNodeCombo, &QComboBox::currentIndexChanged, this, &AssociationsWizard::updateTargetChannelCombo );
-
-    connect( m_sourceChannelCombo, &QComboBox::currentIndexChanged, this, &AssociationsWizard::updateSourceGroupsCombo );
-    connect( m_sourceNodeCombo, &QComboBox::currentIndexChanged, this, &AssociationsWizard::updateSourceChannelsCombo );
+    connect( m_targetNodeCombo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AssociationsWizard::updateTargetChannelCombo );
+    connect( m_sourceChannelCombo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AssociationsWizard::updateSourceGroupsCombo );
+    connect( m_sourceNodeCombo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AssociationsWizard::updateSourceChannelsCombo );
 
 }
 

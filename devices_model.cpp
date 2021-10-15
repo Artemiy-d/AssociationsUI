@@ -1,5 +1,7 @@
 #include "devices_model.h"
 
+#include <algorithm>
+
 DevicesModel::DevicesModel()
 {
     {
