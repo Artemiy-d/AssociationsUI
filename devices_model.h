@@ -32,6 +32,7 @@ public:
     struct AssociationGroup {
         std::string name;
         uint8_t maxAssociationsNumber;
+        std::string profile;
         std::vector<Association> associations;
         std::vector<size_t> commands;
     };

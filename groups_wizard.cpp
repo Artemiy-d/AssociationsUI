@@ -28,7 +28,10 @@ GroupsWizard::GroupsWizard(DevicesModel& model, size_t deviceIndex, size_t chann
 
     mainLayout->addWidget(new QLabel("Device: " + QString::fromStdString(device.name) +
                                      "\nChannel: " + QString::number(m_channelIndex) +
-                                     "\nGroup: " + QString::fromStdString(getGroup().name) ) );
+                                     "\nGroup Name: " + QString::fromStdString(getGroup().name) +
+                                     "\nGroup Profile: " + QString::fromStdString(getGroup().profile) +
+                                     "\nCurrent Associations Number: " + QString::number(getGroup().associations.size()) +
+                                     "\nMax Associations Number: " + QString::number(getGroup().maxAssociationsNumber) ) );
 
     mainLayout->addSpacing( 10 );
 

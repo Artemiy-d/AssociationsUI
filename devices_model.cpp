@@ -38,6 +38,7 @@ DevicesModel::DevicesModel()
             AssociationGroup group;
             group.name = "Lifeline";
             group.maxAssociationsNumber = 10;
+            group.profile = "Siren:Siren";
             group.associations.push_back( { 0, 0 } );
             group.commands.push_back( 60 );
 
@@ -51,6 +52,7 @@ DevicesModel::DevicesModel()
             AssociationGroup group;
             group.name = "Next Group";
             group.maxAssociationsNumber = 2;
+            group.profile = "ElectricMeter";
             group.associations.push_back( { 1, 0 } );
             group.commands.push_back( 20 );
 
@@ -74,6 +76,7 @@ DevicesModel::DevicesModel()
             AssociationGroup group;
             group.name = "Lifeline";
             group.maxAssociationsNumber = 10;
+            group.profile = "some profile";
             group.associations.push_back( { 0, 0 } );
             group.commands.push_back( 60 );
 
