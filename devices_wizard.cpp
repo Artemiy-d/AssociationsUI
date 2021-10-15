@@ -31,7 +31,7 @@ DevicesWizard::DevicesWizard(DevicesModel& model, QWidget* parent) : QWidget(par
 {
     auto mainLayout = new QVBoxLayout(this);
 
-    mainLayout->addWidget(new QLabel("Current ZWave devices List", this));
+    mainLayout->addWidget(new QLabel("Current ZWave devices List (Double click -> Associations Editor)", this));
 
     auto listView = new QListView(this);
     mainLayout->addWidget(listView);
@@ -45,6 +45,11 @@ DevicesWizard::DevicesWizard(DevicesModel& model, QWidget* parent) : QWidget(par
 
     listView->setModel( m_listViewModel );
 
+    listView->setToolTip(
+R"(This is a list of existing included zwave devices. Each main device is a zwave node.
+Some devices have set of child devices. Each subdevice is under the same node as a parent.
+You may add a new device to the list declaring it in the textedit below and pressing the button)"
+);
 
     listView->setEditTriggers( QListView::NoEditTriggers );
 
@@ -57,7 +62,6 @@ DevicesWizard::DevicesWizard(DevicesModel& model, QWidget* parent) : QWidget(par
                                  index.row() == *it ? std::optional<size_t>() : index.row() - *it - 1 );
         }
     });
-
 
 
     auto textEdit = new QTextEdit(this);

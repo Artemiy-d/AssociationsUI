@@ -311,6 +311,7 @@ AssociationsWizard::AssociationsWizard(DevicesModel& model, size_t index, std::o
         layout->addWidget(m_sourceGroupCombo);
 
         auto groupInfoButton = new QPushButton("Info", this);
+        groupInfoButton->setToolTip("Fill source information (source node, channel, group) to see group details.");
         groupInfoButton->setSizePolicy( QSizePolicy::Fixed, groupInfoButton->sizePolicy().verticalPolicy() );
         connect(groupInfoButton, &QPushButton::clicked, this, [this]() {
             if ( m_sourceNodeCombo->currentIndex() > 0 && m_sourceChannelCombo->currentIndex() > 0 && m_sourceGroupCombo->currentIndex() > 0 ) {
@@ -366,6 +367,9 @@ AssociationsWizard::AssociationsWizard(DevicesModel& model, size_t index, std::o
             m_existingAssociationsView = new QListView(this);
             m_existingAssociationsView->setModel( new AssociationListProxyModel( new SourceModel( m_model ) ) );
             m_existingAssociationsView->setItemDelegate(new ItemDelegate);
+            m_existingAssociationsView->setToolTip(
+R"(This is a list of existing associations mathing to the chosen filter (source node, source channel, source group, target node, target channel).
+You may remove association by selecting it and pressing the button.)");
 
             viewsLayout->addWidget(m_existingAssociationsView, 1, 0);
 
@@ -398,9 +402,21 @@ AssociationsWizard::AssociationsWizard(DevicesModel& model, size_t index, std::o
         {
             viewsLayout->addWidget( new QLabel("Hint For Association Adding", this), 0, 1 );
 
+
             m_hintAssociationsView = new QListView(this);
             m_hintAssociationsView->setModel( new AssociationListProxyModel( new HintSourceModel( m_model ) ) );
             m_hintAssociationsView->setItemDelegate(new ItemDelegate);
+
+            m_hintAssociationsView->setToolTip(
+R"(This is a list all the associations that could be added.
+They are matching to the selected filter (source node, source channel, source group, target node, target channel).
+If you want to add the association select it and press the button.
+Note, the list should contain more relevant associations at the top. Less relevant ones should be below and lit with another color.
+Flow of adding a association for a simple user:
+    He just selects the association from the list with filtered source node only.
+    User doesn't have to know all the details about zwave associations.
+Flow of adding a association for an advanced user:
+    He may input all the required information to filters manually and then chose only one option from the list.)");
 
             viewsLayout->addWidget(m_hintAssociationsView, 1, 1);
 
