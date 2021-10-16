@@ -418,7 +418,7 @@ You may remove association by selecting it and pressing the button.)");
         }
 
         {
-            viewsLayout->addWidget( new QLabel("Hint For Association Adding", this), 0, 1 );
+            viewsLayout->addWidget( new QLabel("Potential Association", this), 0, 1 );
 
 
             m_hintAssociationsView = new QListView(this);

@@ -31,6 +31,7 @@ set(PROJECT_SOURCES
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(associations
+        WIN32
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
@@ -47,6 +48,7 @@ else()
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         add_executable(associations
+            WIN32
             ${PROJECT_SOURCES}
         )
     endif()
