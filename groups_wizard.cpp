@@ -124,8 +124,6 @@ GroupsWizard::GroupsWizard(DevicesModel& model, size_t deviceIndex, size_t chann
         edit->setText("0xF1");
         edit->setMinimumWidth(150);
         addCommandLayout->addWidget(edit);
-
-
     }
 
     auto addCommandButton = new QPushButton("Add", this);

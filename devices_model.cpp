@@ -10,6 +10,12 @@ DevicesModel::DevicesModel()
         device.name = "eZLO hub";
         device.icon = "";
 
+        {
+            std::vector< AssociationGroup > groups;
+
+            device.channelsToGroups.push_back(std::move(groups));
+        }
+
         addDevice( std::move(device) );
     }
 

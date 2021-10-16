@@ -13,6 +13,7 @@
 #include <QComboBox>
 #include <QMetaType>
 #include <QStyledItemDelegate>
+#include <QSignalBlocker>
 
 #include <sstream>
 #include <set>
@@ -27,10 +28,27 @@ struct AssociationInfo {
     std::optional<size_t> targetChannelIndex;
 };
 
-bool isAssociationRelevant(const DevicesModel& model, const AssociationInfo& info) {
-    const auto& device = model.getDevices()[info.deviceIndex];
+void updateComboModelWithSavingIndex(QComboBox* combo, QStringList stringList) {
+    const auto prevIndex = combo->currentIndex();
+    const auto newIndex = prevIndex < 0 || prevIndex >= stringList.size() ? 0 : prevIndex;
 
-    return true;
+    QSignalBlocker blocker(combo);
+
+    static_cast<QStringListModel*>(combo->model())->setStringList(stringList);
+
+    combo->setCurrentIndex( newIndex );
+}
+
+void updateComboModelWithSavingText(QComboBox* combo, QStringList stringList) {
+    auto foundIt = std::find( stringList.begin(), stringList.end(), combo->currentText());
+
+    const auto newIndex = foundIt == stringList.end() ? 0 : static_cast<int>(foundIt - stringList.begin());
+
+    QSignalBlocker blocker(combo);
+
+    static_cast<QStringListModel*>(combo->model())->setStringList(stringList);
+
+    combo->setCurrentIndex( newIndex );
 }
 
 class ItemDelegate : public QStyledItemDelegate {
@@ -494,7 +512,7 @@ void AssociationsWizard::updateSourceChannelsCombo() {
         handleDevice( m_model.getDevices()[ m_sourceNodeCombo->currentIndex() - 1 ] );
     }
 
-    static_cast< QStringListModel* >( m_sourceChannelCombo->model() )->setStringList(stringList);
+    updateComboModelWithSavingText(m_sourceChannelCombo, stringList);
 
     updateSourceGroupsCombo();
 }
@@ -536,7 +554,7 @@ void AssociationsWizard::updateSourceGroupsCombo() {
     std::sort( stringList.begin() + 1, stringList.end() );
     stringList.erase( std::unique(stringList.begin() + 1, stringList.end()), stringList.end() );
 
-    static_cast< QStringListModel* >( m_sourceGroupCombo->model() )->setStringList(stringList);
+    updateComboModelWithSavingText(m_sourceGroupCombo, stringList);
 
     invalidateFilters();
 }
@@ -550,7 +568,7 @@ void AssociationsWizard::updateTargetNodeCombo() {
         stringList.append( QString("Node ") + QString::number(device.nodeId) + " (" + QString::fromStdString( device.name ) + ")" );
     }
 
-    static_cast< QStringListModel* >( m_targetNodeCombo->model() )->setStringList(stringList);
+    updateComboModelWithSavingText(m_targetNodeCombo, stringList);
 
     updateTargetChannelCombo();
 
@@ -580,7 +598,7 @@ void AssociationsWizard::updateTargetChannelCombo() {
         handleDevice( m_model.getDevices()[ m_targetNodeCombo->currentIndex() - 1 ] );
     }
 
-    static_cast< QStringListModel* >( m_targetChannelCombo->model() )->setStringList(stringList);
+    updateComboModelWithSavingText(m_targetChannelCombo, stringList);
 
     invalidateFilters();
 }
