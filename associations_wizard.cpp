@@ -410,8 +410,8 @@ You may remove association by selecting it and pressing the button.)");
 
                         m_model.removeAssociation( reference.deviceIndex, reference.channelIndex, reference.groupIndex, { reference.targetDeviceIndex, reference.targetChannelIndex } );
 
-                        proxyModel->setSourceModel( new HintSourceModel( m_model ) );
-                        static_cast<QAbstractProxyModel*>( m_existingAssociationsView->model() )->setSourceModel( new SourceModel( m_model ) );
+                        proxyModel->setSourceModel( new SourceModel( m_model ) );
+                        static_cast<QAbstractProxyModel*>( m_hintAssociationsView->model() )->setSourceModel( new HintSourceModel( m_model ) );
                     }
                 }
             });
@@ -508,7 +508,7 @@ void AssociationsWizard::updateSourceChannelsCombo() {
 
     auto handleDevice = [&](const DevicesModel::Device& device) {
           for ( ; maxChannelsNumber < device.channelsToGroups.size(); ++maxChannelsNumber ) {
-              stringList.append( "Channel " + QString::number( maxChannelsNumber ) );
+              stringList.append( "Channel " + QString::number( maxChannelsNumber ) + " ( ...subdevices... )" );
           }
     };
 
@@ -594,7 +594,7 @@ void AssociationsWizard::updateTargetChannelCombo() {
 
     auto handleDevice = [&](const DevicesModel::Device& device) {
           for ( ; maxChannelsNumber < device.channelsToGroups.size(); ++maxChannelsNumber ) {
-              stringList.append( "Channel " + QString::number( maxChannelsNumber ) );
+              stringList.append( "Channel " + QString::number( maxChannelsNumber ) + " ( ...subdevices... )" );
           }
     };
 

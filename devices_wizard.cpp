@@ -53,7 +53,9 @@ You may add a new device to the list declaring it in the textedit below and pres
 
     listView->setEditTriggers( QListView::NoEditTriggers );
 
-    connect( listView, &QListView::doubleClicked, this, [this](const QModelIndex &index) {
+    auto editDeviceAssociations = [=]() {
+        const auto index = listView->currentIndex();
+
         auto it = std::upper_bound( m_parents.begin(), m_parents.end(), index.row() );
 
         if ( !m_parents.empty() && it != m_parents.begin() ) {
@@ -61,8 +63,15 @@ You may add a new device to the list declaring it in the textedit below and pres
             emit deviceSelected( *it,
                                  index.row() == *it ? std::optional<size_t>() : index.row() - *it - 1 );
         }
-    });
+    };
 
+    connect( listView, &QListView::doubleClicked, this, editDeviceAssociations);
+
+    auto editDeviceAssociationsButton = new QPushButton( "Edit Selected Device Associations", this );
+    connect( editDeviceAssociationsButton, &QPushButton::clicked, this, editDeviceAssociations);
+
+
+    mainLayout->addWidget(editDeviceAssociationsButton);
 
     auto textEdit = new QTextEdit(this);
     textEdit->setFixedHeight(200);
