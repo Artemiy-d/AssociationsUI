@@ -441,6 +441,15 @@ Flow of adding a association for an advanced user:
             auto addAssociationButton = new QPushButton("Add Selected Association", this);
             viewsLayout->addWidget(addAssociationButton, 2, 1);
 
+            addAssociationButton->setToolTip(
+R"(What we add:
+Association is mapping of a source to a target.
+Source is node+channel+association group:
+    Node contains a list of channels
+        Each channel contains a list of association groups
+            Each group has maximum number of targets
+Target is node+channel or just node (whole node))");
+
 
             connect(addAssociationButton, &QPushButton::clicked, this, [=]() {
                 auto selectedIndexes = m_hintAssociationsView->selectionModel()->selectedIndexes();
